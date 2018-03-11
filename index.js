@@ -1,86 +1,104 @@
+const fs = require('fs');
 const Discord = require('discord.js');
+const { help_prefix, prefix, token } = require('./config.json');
+
 const client = new Discord.Client();
-const { prefix, token } = require('./config.json');
+client.commands = new Discord.Collection();
+
+const commandFiles = fs.readdirSync('./commands');
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+
+    // set a new item in the Collection
+    // with the key as the command name and the value as the exported module
+    client.commands.set(command.name, command);
+}
+
+const cooldowns = new Discord.Collection();
 
 client.on('ready', () => {
-    console.log('Ready!');
+    console.log('Стартуем!');
 });
 
 client.on('message', message => {
-    // if (message.author.id == 0306569661686874114) {
-    //   message.channel.send('(c) Druss');
+
+    // // help
+    // if (message.content.startsWith(help_prefix)) {
+    //   const helpList = client.commands.map(command => {
+    //     return `\nКоманда ${command.name}.${command.usage? '\nИспользование: ' + command.usage: ''}\nОписание: ${command.description}`;
+    //   });
+    //   message.channel.send(helpList);
     // }
 
+    // react
+    if (message.content === 'fruits') {
+      Promise.all([
+        message.react('🍎'),
+        message.react('🍊'),
+        message.react('🍇'),
+      ])
+        .catch(() => console.error('One of the emojis failed to react.'));
+    }
+
+    if (message.author.id == 306569661686874114) {
+      message.react('💩');
+    }
+
+    // commands
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).split(/ +/);
-    const command = args.shift().toLowerCase();
+    const commandName = args.shift().toLowerCase();
 
-    if (command === 'ping') {
-        message.channel.send('Pong.');
+    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+
+    if (!command) return;
+
+    if (command.guildOnly && message.channel.type !== 'text') {
+      return message.reply('I can\'t execute that command inside DMs!');
     }
-    else if (command === 'beep') {
-        message.channel.send('Boop.');
-    }
-    else if (command === `${prefix}server`) {
-      message.channel.send(
-        `Server name: ${message.guild.name}\n
-         Total members: ${message.guild.memberCount}\n
-         Created: ${message.guild.createdAt}\n
-         Region: ${message.guild.region}
-        `);
-    }
-    else if (message.content === `${prefix}user-info`) {
-      message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
-    }
-    else if (command === 'args-info') {
-      if (!args.length) {
-        return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
-      }
-      else if (args[0] === 'foo') {
-        return message.channel.send('bar');
-      }
-      message.channel.send(`First argument: ${args[0]}`);
-    }
-    else if (command === 'kick') {
-      // grab the "first" mentioned user from the message
-      // this will return a `User` object, just like `message.author`
-      if (!message.mentions.users.size) {
-        return message.reply('you need to tag a user in order to kick them!');
+
+    if (command.args && !args.length) {
+      let reply = `Вы не указали ни одного аргумента, ${message.author}!`;
+      if (command.usage) {
+        reply += `\nОжидаемое использование: \`${prefix}${command.name} ${command.usage}\``;
       }
 
-      const taggedUser = message.mentions.users.first();
-
-      message.channel.send(`You wanted to kick: ${taggedUser.username}`);
+      return message.channel.send(reply);
     }
-    else if (command === 'avatar') {
-      if (!message.mentions.users.size) {
-        return message.channel.send(`Your avatar: ${message.author.displayAvatarURL}`);
+
+    // cooldown
+    if (!cooldowns.has(command.name)) {
+      cooldowns.set(command.name, new Discord.Collection());
+    }
+
+    const now = Date.now();
+    const timestamps = cooldowns.get(command.name);
+    const cooldownAmount = (command.cooldown || 3) * 1000;
+
+    if (!timestamps.has(message.author.id)) {
+      timestamps.set(message.author.id, now);
+      setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+    }
+    else {
+      const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+      if (now < expirationTime) {
+        const timeLeft = (expirationTime - now) / 1000;
+          return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
       }
 
-      const avatarList = message.mentions.users.map(user => {
-        return `${user.username}'s avatar: ${user.displayAvatarURL}`;
-      });
-
-      // send the entire array of strings as a message
-      // by default, discord.js will `.join()` the array with `\n`
-      message.channel.send(avatarList);
+      timestamps.set(message.author.id, now);
+      setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }
-    else if (command === 'prune') {
-      if (user) {}
 
-      const amount = parseInt(args[0]) + 1;
-
-      if (isNaN(amount)) {
-        return message.reply('that doesn\'t seem to be a valid number.');
-      } else if (amount <= 1 || amount > 100) {
-        return message.reply('you need to input a number between 1 and 99.');
-      }
-
-      message.channel.bulkDelete(amount, true).catch(err => {
-        console.error(err);
-        message.channel.send('there was an error trying to prune messages in this channel!');
-      });
+    // execute
+    try {
+      command.execute(message, args);
+    }
+    catch (error) {
+      console.error(error);
+      message.reply('в ходе выполнения команды случилась ошибка! Зовите Игоря.');
     }
 });
 
