@@ -1,0 +1,15 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "Bot for ZAWKVAR channel",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Meelistenso",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.3.2",
+    "eslint": "^4.18.2"
+  }
+}
