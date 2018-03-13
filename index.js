@@ -4,7 +4,9 @@ const { help_prefix, prefix, token } = require('./config.json');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+client.guards = new Discord.Collection();
 
+//commands load
 const commandFiles = fs.readdirSync('./commands');
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -12,6 +14,15 @@ for (const file of commandFiles) {
     // set a new item in the Collection
     // with the key as the command name and the value as the exported module
     client.commands.set(command.name, command);
+}
+//guards load
+const guardFiles = fs.readdirSync('./guards');
+for (const file of guardFiles) {
+    const guard = require(`./guards/${file}`);
+
+    // set a new item in the Collection
+    // with the key as the guard name and the value as the exported module
+    client.guards.set(guard.name, guard);
 }
 
 const cooldowns = new Discord.Collection();
@@ -43,6 +54,9 @@ client.on('message', message => {
     if (message.author.id == 306569661686874114) {
       message.react('💩');
     }
+
+    // guards
+
 
     // commands
     if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -92,9 +106,9 @@ client.on('message', message => {
       setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }
 
-    // execute
+    // execute command
     try {
-      command.execute(message, args);
+      command.execute(message, args, client);
     }
     catch (error) {
       console.error(error);
