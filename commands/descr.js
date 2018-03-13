@@ -175,12 +175,10 @@ module.exports = {
       }
     }
     requestWord = encodeUrl(requestWord);
-    console.log(requestWord);
     const url = 'https://' + lang +
       '.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=' +
       requestWord +
       '&prop=info&format=json&redirects=resolve';
-    console.log(url);
     fetch(url)
       .then(response => {
         response.json().then(json => {
@@ -195,7 +193,7 @@ module.exports = {
           } else {
             message.channel.send('Сам хз');
           }
-          console.log(json[0][0]);
+          console.log('Request: '+json[0][0]);
         });
       })
       .catch(error => {

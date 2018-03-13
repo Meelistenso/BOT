@@ -41,7 +41,7 @@ client.on('message', message => {
     //   message.channel.send(helpList);
     // }
 
-    // react
+    // reacts
     if (message.content === 'fruits') {
       Promise.all([
         message.react('🍎'),
@@ -109,6 +109,7 @@ client.on('message', message => {
     // execute command
     try {
       command.execute(message, args, client);
+      console.log(message.author +':\n'+ message.content);
     }
     catch (error) {
       console.error(error);
@@ -117,3 +118,6 @@ client.on('message', message => {
 });
 
 client.login(token);
+
+const hook = new Discord.WebhookClient('webhook id', 'webhook token');
+hook.send('I am now alive!');
