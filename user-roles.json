@@ -1,0 +1,16 @@
+{
+  "roles": [
+    {
+      "name": "mate",
+      "premissions": ["ping", "beep", "descr", "user-info", "avatar", "gachi", "help", "react"]
+    },
+    {
+      "name": "intruder",
+      "premissions": ["ping", "beep"]
+    },
+    {
+      "name": "@everyone",
+      "premissions": ["help", "ping", "beep", "user-info", "descr"]
+    }
+  ]
+}

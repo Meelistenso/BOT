@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'message-content',
+    name: 'user',
     description: 'Отображает аватар упомянутых пользователях',
     execute(message) {
       if (message.content.toLowerCase().includes('dota')) {

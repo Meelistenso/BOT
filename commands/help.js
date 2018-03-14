@@ -34,9 +34,13 @@ module.exports = {
       message.author.send(data, { split: true })
         .then(() => {
             if (message.channel.type !== 'dm') {
-                message.channel.send('Отправляю сообщение со всеми командами:');
+                message.channel.send('Отправляю сообщение со всеми командами:').then((msg) => {
+                  msg.delete(3000);
+                });
             }
         })
-        .catch(() => message.reply('Похоже, я не могу тебе написать!'));
+        .catch(() => message.reply('Похоже, я не могу тебе написать!').then((msg) => {
+                  msg.delete(3000);
+                }));
     },
 };
