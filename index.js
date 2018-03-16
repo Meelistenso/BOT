@@ -51,13 +51,13 @@ client.on('message', message => {
   let guardTrigger = false;
 
   try {
-    if (guardContent.execute(message) == -1) {
+    if (guardContent.execute(message, client) == -1) {
       guardTrigger = true;
     }
     if (guardUser.execute(message) == -1) {
       guardTrigger = true;
     }
-    guardRole.execute(message, command);
+    if (guardRole.execute(message, command) == -1) { return };
   } catch (error) {
     console.error(error);
     message.reply('в ходе проверки команды случилась ошибка! Зовите Игоря.');
@@ -102,7 +102,7 @@ client.on('message', message => {
 });
 
 function login() {
-  client.login(token).catch((error) => { login() });
+  client.login(token).catch((error) => { console.log(error); login(); });
 }
 
 login();

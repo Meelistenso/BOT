@@ -3,18 +3,22 @@ module.exports = {
   description: 'Some gachi',
   execute(message, args, client) {
     const voiceChannel = message.member.voiceChannel;
+    if (!voiceChannel) {
+      message.reply("Мб зайди кудат, не?").then(msg => msg
+        .delete(3000));
+    }
     const broadcast = message.client.createVoiceBroadcast();
     const ytdl = require('ytdl-core');
     const streamOptions = { seek: 0, volume: 1 };
     let file;
     if (args[0]) { file = args[0] } else {
       file =
-        'C:/BOT/assets/music/gachi/Vulgar_Power.mp3'
+        './assets/music/gachi/Vulgar_Power.mp3'
     }
     voiceChannel.join()
       .then(connection => {
         if (!args[0]) {
-          broadcast.playFile('C:/BOT/assets/music/gachi/Vulgar_Power.mp3');
+          broadcast.playFile(file);
           const dispatcher = connection.playBroadcast(broadcast);
           dispatcher.on("end", end => {
             console.log("left channel");
