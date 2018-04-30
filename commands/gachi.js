@@ -6,6 +6,7 @@ module.exports = {
     if (!voiceChannel) {
       message.reply("Мб зайди кудат, не?").then(msg => msg
         .delete(3000));
+      return;
     }
     const broadcast = message.client.createVoiceBroadcast();
     const ytdl = require('ytdl-core');

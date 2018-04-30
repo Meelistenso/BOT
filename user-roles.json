@@ -2,7 +2,7 @@
   "roles": [
     {
       "name": "mate",
-      "premissions": ["ping", "beep", "descr", "user-info", "avatar", "gachi", "help", "react", "show"]
+      "premissions": ["ping", "beep", "descr", "user-info", "avatar", "gachi", "help", "react", "show", "translate"]
     },
     {
       "name": "intruder",
@@ -10,7 +10,7 @@
     },
     {
       "name": "@everyone",
-      "premissions": ["help", "ping", "beep", "user-info", "descr"]
+      "premissions": ["help", "ping", "beep", "user-info", "descr", "translate"]
     }
   ]
 }
