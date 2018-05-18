@@ -1,21 +1,20 @@
 module.exports = {
   name: 'kick',
-  usage: '<kick> {Упоминание} | {Упоминание} ...',
-  description: `Кикает упомянутых пользователей из голосового чата. `,
+  usage: '<kick> {Упоминание}',
+  description: `Кикает упомянутого пользователя`,
   guildOnly: true,
   execute(message, args) {
-    if (!message.mentions.users.size) {
-      return message.reply('you need to tag a user in order to kick them!').then(
-        msg => {
-          msg.delete(3000);
-        })
-    }
-    // const taggedUser = message.mentions.users.first();
-    const avatarList = message.mentions.users.map(user => {
-      message.channel.send(`You wanted to kick: ${user.username}`);
-    });
-    message.channel.send(`Это успех!`).then(msg => {
-      msg.delete(3000);
-    })
+    let member = message.mentions.members.first() || message.guild.members.get(args[0]);
+    if(!member)
+      return message.reply("Please mention a valid member of this server");
+    if(!member.kickable)
+      return message.reply("I cannot kick this user! Do they have a higher role? Do I have kick permissions?");
+    let reason = args.slice(1).join(' ');
+    if(!reason) reason = "No reason provided";
+
+    member.kick(reason)
+      .catch(error => message.reply(`Sorry ${message.author} I couldn't kick because of : ${error}`));
+
+    message.reply(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`);
   },
 };

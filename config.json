@@ -3,5 +3,6 @@
   "help_prefix": "ПАМАГИТЕ!",
   "token": "NDIyNDYxNjg0MzI2NTk2NjE1.DYcHtg.G5ZwdUszadNFKdck-sOYOxQpHrk",
   "meaning_of_life": 42,
-  "hook_url": "https://discordapp.com/api/webhooks/423478358802694149/cMGFovWaSeBziZnRJPWoHdBmV2Sh5feokFJYjcelxS5djvLDPUbnW1OhIAM90CKW0sfY"
+  "hook_url": "https://discordapp.com/api/webhooks/423478358802694149/cMGFovWaSeBziZnRJPWoHdBmV2Sh5feokFJYjcelxS5djvLDPUbnW1OhIAM90CKW0sfY",
+  "server_whitelist": [ "ZAWKVAR" ]
 }
